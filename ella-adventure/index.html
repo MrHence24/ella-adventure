@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1e88e5" />
+  <meta name="description" content="Ella's Adventure — Dress up your character, run fast, feed giraffes, and discover original creatures across 4 colorful worlds!" />
+  <title>Ella's Adventure</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231e88e5'/%3E%3Cpolygon points='32,10 38,24 54,26 42,36 45,52 32,44 19,52 22,36 10,26 26,24' fill='%23ffd54f'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./src/styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Top Persistent Bar (compact, icon-rich) -->
+    <header id="top-bar" class="top-bar">
+      <div class="brand-badge">
+        <span class="brand-star" aria-hidden="true">★</span>
+        <span class="brand-title">Ella's Adventure</span>
+      </div>
+      <div class="top-stats">
+        <div class="stat-pill" title="Stars Collected">
+          <span class="stat-icon">⭐</span>
+          <span id="total-stars-count">0</span>
+        </div>
+        <div class="stat-pill" title="Creatures Discovered">
+          <span class="stat-icon">🐾</span>
+          <span id="total-creatures-count">0/12</span>
+        </div>
+        <button id="btn-creature-book" class="icon-btn" title="Creature Book" aria-label="Open Creature Book">
+          <span>📖</span>
+          <span class="btn-label">Creatures</span>
+        </button>
+        <button id="btn-worlds-map" class="icon-btn" title="Worlds" aria-label="Open Worlds">
+          <span>🗺️</span>
+          <span class="btn-label">Worlds</span>
+        </button>
+        <button id="btn-audio-settings" class="icon-btn" title="Sound & Speed" aria-label="Open Settings">
+          <span id="audio-icon">🔊</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN 1: CHARACTER CUSTOMIZATION (Default Start Screen) -->
+    <main id="screen-customize" class="screen active">
+      <div class="customize-layout">
+        <!-- Left: Large Interactive Character Preview -->
+        <section class="preview-panel">
+          <div class="preview-stage">
+            <canvas id="preview-canvas" width="380" height="440" aria-label="Character Preview"></canvas>
+            <div class="preview-controls">
+              <button id="btn-preview-anim" class="pill-btn secondary" type="button">
+                <span id="preview-anim-icon">🏃</span>
+                <span id="preview-anim-text">Run Pose</span>
+              </button>
+              <button id="btn-randomize" class="pill-btn secondary" type="button">
+                <span>🎲</span>
+                <span>Surprise Me!</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active World Pill + Huge PLAY Button -->
+          <div class="play-launch-box">
+            <div class="selected-world-strip">
+              <button id="btn-prev-world" class="circle-mini-btn" type="button" aria-label="Previous World">◀</button>
+              <div class="selected-world-info">
+                <span id="selected-world-emoji" class="world-emoji">🌸</span>
+                <div>
+                  <div class="world-label-small">Next Adventure</div>
+                  <div id="selected-world-name" class="world-name-large">Colorful Meadow</div>
+                </div>
+              </div>
+              <button id="btn-next-world" class="circle-mini-btn" type="button" aria-label="Next World">▶</button>
+            </div>
+            <button id="btn-play" class="play-cta-btn" type="button">
+              <span class="play-triangle">▶</span>
+              <span>PLAY!</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Right: Visual Dressing Room -->
+        <section class="wardrobe-panel">
+          <!-- Category Tabs (Large Icons + Simple Labels) -->
+          <div id="wardrobe-tabs" class="wardrobe-tabs" role="tablist">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Sub-filter for Outfit Styles (Princess, Everyday, Superhero, Adventure, Special) -->
+          <div id="style-filter-bar" class="style-filter-bar hidden">
+            <!-- Populated dynamically when Outfits/Dresses tab is active -->
+          </div>
+
+          <!-- Items Grid -->
+          <div id="wardrobe-grid" class="wardrobe-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- SCREEN 2: MAIN GAMEPLAY -->
+    <main id="screen-game" class="screen">
+      <div class="game-container">
+        <canvas id="game-canvas" aria-label="Ella's Adventure Game Canvas"></canvas>
+
+        <!-- In-Game HUD -->
+        <div class="game-hud">
+          <div class="hud-left">
+            <button id="btn-pause" class="hud-btn" type="button" aria-label="Pause Game">⏸️</button>
+            <button id="btn-back-dressup" class="hud-btn" type="button" title="Back to Dress Up">👗</button>
+          </div>
+          <div class="hud-center">
+            <div class="progress-track">
+              <div id="level-progress-fill" class="progress-fill"></div>
+              <span id="level-progress-flag" class="progress-flag">🏁</span>
+            </div>
+            <div id="hud-world-title" class="hud-world-title">World 1: Colorful Meadow</div>
+          </div>
+          <div class="hud-right">
+            <div class="hud-pill">⭐ <span id="hud-stars">0</span></div>
+            <div class="hud-pill">💎 <span id="hud-gems">0</span></div>
+          </div>
+        </div>
+
+        <!-- Discovery Toast (Non-intrusive celebration when finding a creature or unlocking an item) -->
+        <div id="discovery-toast" class="discovery-toast hidden" role="status" aria-live="polite">
+          <span id="toast-icon" class="toast-icon">🐾</span>
+          <div>
+            <div id="toast-title" class="toast-title">New Creature!</div>
+            <div id="toast-subtitle" class="toast-subtitle">Bramblebun</div>
+          </div>
+        </div>
+
+        <!-- Giraffe Feeding Prompt Overlay (Appears when near a Giraffe!) -->
+        <div id="giraffe-feed-prompt" class="giraffe-feed-prompt hidden">
+          <button id="btn-feed-giraffe" class="feed-giraffe-btn" type="button">
+            <span class="feed-leaf-icon">🌿</span>
+            <span>Feed Giraffe!</span>
+          </button>
+        </div>
+
+        <!-- Mobile / Touch Friendly Controls -->
+        <div id="touch-controls" class="touch-controls">
+          <button id="btn-touch-slide" class="touch-action-btn slide-btn" type="button" aria-label="Slide">
+            <span>⬇️</span>
+            <span class="touch-label">SLIDE</span>
+          </button>
+          <div class="desktop-hint">
+            <span>Space / ⬆ Jump</span>
+            <span>•</span>
+            <span>⬇ Slide</span>
+          </div>
+          <button id="btn-touch-jump" class="touch-action-btn jump-btn" type="button" aria-label="Jump">
+            <span>⬆️</span>
+            <span class="touch-label">JUMP!</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- MODAL: CREATURE BOOK -->
+    <div id="modal-creatures" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="creatures-modal-title">
+      <div class="modal-card large-modal">
+        <div class="modal-header">
+          <h2 id="creatures-modal-title">🐾 Creature Book</h2>
+          <button class="modal-close-btn" data-close="modal-creatures" aria-label="Close">✕</button>
+        </div>
+        <p class="modal-subtitle">Explore every world to meet all 12 friendly creatures!</p>
+        <div id="creatures-grid" class="creatures-grid"></div>
+      </div>
+    </div>
+
+    <!-- MODAL: WORLDS MAP -->
+    <div id="modal-worlds" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="worlds-modal-title">
+      <div class="modal-card large-modal">
+        <div class="modal-header">
+          <h2 id="worlds-modal-title">🗺️ Adventure Worlds</h2>
+          <button class="modal-close-btn" data-close="modal-worlds" aria-label="Close">✕</button>
+        </div>
+        <div id="worlds-grid" class="worlds-grid"></div>
+      </div>
+    </div>
+
+    <!-- MODAL: AUDIO & SPEED SETTINGS -->
+    <div id="modal-settings" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 id="settings-modal-title">⚙️ Sound & Speed</h2>
+          <button class="modal-close-btn" data-close="modal-settings" aria-label="Close">✕</button>
+        </div>
+        <div class="settings-body">
+          <div class="setting-row">
+            <label for="toggle-mute">🔊 Sound & Music</label>
+            <button id="toggle-mute" class="toggle-pill on" type="button">ON</button>
+          </div>
+          <div class="setting-row">
+            <label for="volume-slider">🎵 Volume</label>
+            <input id="volume-slider" type="range" min="0" max="100" value="70" />
+          </div>
+          <div class="setting-row">
+            <label for="toggle-voice">🗣️ Voice Hints</label>
+            <button id="toggle-voice" class="toggle-pill on" type="button">ON</button>
+          </div>
+          <div class="setting-row">
+            <label>⚡ Running Speed</label>
+            <div class="speed-pills">
+              <button class="speed-pill" data-speed="cozy" type="button">🐢 Cozy</button>
+              <button class="speed-pill active" data-speed="fast" type="button">🐇 Fast</button>
+              <button class="speed-pill" data-speed="super" type="button">⚡ Super</button>
+            </div>
+          </div>
+          <div class="setting-row danger-zone">
+            <button id="btn-reset-progress" class="pill-btn secondary small" type="button">🔄 Reset Save Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PAUSE -->
+    <div id="modal-pause" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card center-modal">
+        <h2>⏸️ Take a Breather!</h2>
+        <div class="modal-actions-col">
+          <button id="btn-resume" class="play-cta-btn small-cta" type="button">▶ Keep Running!</button>
+          <button id="btn-restart-level" class="pill-btn secondary" type="button">🔄 Restart Level</button>
+          <button id="btn-pause-dressup" class="pill-btn secondary" type="button">👗 Dress Up</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: LEVEL COMPLETE CELEBRATION -->
+    <div id="modal-complete" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card center-modal celebration-card">
+        <div class="celebration-trophy">🏆</div>
+        <h2 id="complete-title">Amazing Job, Ella!</h2>
+        <p id="complete-subtitle">You finished Colorful Meadow!</p>
+        <div class="complete-stats">
+          <div class="complete-stat">⭐ <span id="complete-stars">0</span> Stars</div>
+          <div class="complete-stat">💎 <span id="complete-gems">0</span> Gems</div>
+        </div>
+        <div id="complete-unlocks" class="complete-unlocks hidden">
+          <h3>🎁 New Unlocks!</h3>
+          <div id="complete-unlocks-list" class="unlocks-list"></div>
+        </div>
+        <div class="modal-actions-col">
+          <button id="btn-next-world-play" class="play-cta-btn small-cta" type="button">▶ Next World!</button>
+          <button id="btn-complete-dressup" class="pill-btn primary-soft" type="button">👗 Try New Outfits!</button>
+          <button id="btn-complete-replay" class="pill-btn secondary" type="button">🔄 Play Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
