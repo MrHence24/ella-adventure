@@ -3,12 +3,12 @@
 ## Running Tests
 Unit tests use Node.js's built-in test runner (`node:test`):
 ```bash
+npm ci
 npm test
 ```
 
 ## Local Dev Server
 ```bash
-npm install
 npm run dev
 ```
 

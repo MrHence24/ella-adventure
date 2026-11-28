@@ -98,6 +98,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-height: 44px;
   padding: 8px 13px;
   border: 2px solid #bbdefb;
   border-radius: 999px;
@@ -223,8 +224,8 @@ html, body {
 }
 
 .circle-mini-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #ffffff;
@@ -348,6 +349,7 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-height: 44px;
   padding: 6px 12px;
   border-radius: 999px;
   border: 2px solid #e1f5fe;
@@ -702,8 +704,8 @@ html, body {
 }
 
 .modal-close-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: var(--blue-soft);
@@ -821,6 +823,7 @@ html, body {
 }
 
 .toggle-pill {
+  min-height: 44px;
   padding: 7px 16px;
   border-radius: 999px;
   border: none;
@@ -841,6 +844,7 @@ html, body {
 }
 
 .speed-pill {
+  min-height: 44px;
   padding: 6px 10px;
   border-radius: 999px;
   border: 2px solid #bbdefb;
